@@ -1,5 +1,5 @@
 <div class="result-card">
-  <canvas #canvas width="600" height="300">
+  <canvas #cardCanvas width="421" height="614">
 
   </canvas>
 </div>
@@ -13,6 +13,7 @@
       <input matInput type="text" formControlName="name" aria-label="Nom de la carte">
     </mat-form-field>
 
-    
+    <button color="primary" mat-raised-button (click)="loadImage()">Charger l'image</button>
+    <button color="primary" mat-raised-button (click)="addName()">Ajouter le nom</button>
   </form>
 </div>
