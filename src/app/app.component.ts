@@ -45,18 +45,18 @@ export class AppComponent {
 
   constructor(private _formBuilder: FormBuilder){
     this.cardForm = this._formBuilder.group({
-      name: new FormControl(['']),
+      name: new FormControl(['bonsoir']),
       cardType: new FormControl(['']),
       symbol: new FormControl(['']),
       icon: new FormControl(['']),
       atk: new FormControl(['']),
       def: new FormControl(['']),
-      description: new FormControl([''])
+      description: new FormControl(['lorem'])
     })
   }
 
   ngOnInit(){
-
+    this.generateCard();
   }
 
   isMonster(){
@@ -87,7 +87,7 @@ export class AppComponent {
 
   generateCard(){
     // VARIABLES
-    const name = this.cardForm.controls.name.value;
+    const name = this.cardForm.controls.name.value.toString().toUpperCase();
     const cardType = this.cardForm.controls.cardType.value;
     const symbol = this.cardForm.controls.symbol.value;
     const icon = this.cardForm.controls.icon.value;
@@ -104,32 +104,42 @@ export class AppComponent {
     const context = canvas.getContext('2d');
 
     // DRAW TEMPLATE
-    this.drawTemplateCard(cardType, context, name);
+    this.drawTemplateCard(cardType, context, name, description);
 
     // ADD NAME
     //this.addName(name, context);
 
   }
 
-  drawTemplateCard(cardType: string, context: any, name){
+  drawTemplateCard(cardType: string, context: any, name, description: string){
     console.log("in draw template")
     const base_image = new Image();
     base_image.src = this.setCardTemplate(cardType);
-    base_image.onload = this.loadImageTemplate(base_image, context, name)
+    base_image.onload = this.loadImageTemplate(base_image, context, name, description)
   }
 
-  loadImageTemplate(base_image: any, context: any, name: string){
+  loadImageTemplate(base_image: any, context: any, name: string, description: string){
     return () => {
       context.drawImage(base_image, 0,0,421, 614)
       this.addName(name, context)
+      this.addDescription(description, context)
     }
   }
 
   addName(name: string, context: any){
     context.globalCompositeOperation = 'source-over'
     console.log("in addname", name)
-    context.font = "60pt Calibri";
-    context.fillText(name, 50, 60);
+    context.font = "25pt Calibri";
+    context.fillText(name, 36, 58);
   }
+
+  addDescription(description: string, context: any){
+    context.globalCompositeOperation = 'source-over'
+    console.log("in add description", description)
+    context.font = "15pt Calibri";
+    context.fillText(description, 35, 485);
+  }
+
+
 
 }
