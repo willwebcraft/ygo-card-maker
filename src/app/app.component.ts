@@ -104,18 +104,25 @@ export class AppComponent {
     const context = canvas.getContext('2d');
 
     // DRAW TEMPLATE
-    this.drawTemplateCard(cardType, context);
+    this.drawTemplateCard(cardType, context, name);
 
     // ADD NAME
-    this.addName(name, context);
+    //this.addName(name, context);
 
   }
 
-  drawTemplateCard(cardType: string, context: any){
+  drawTemplateCard(cardType: string, context: any, name){
     console.log("in draw template")
     const base_image = new Image();
     base_image.src = this.setCardTemplate(cardType);
-    base_image.onload = function(){context.drawImage(base_image, 0,0,421, 614)}
+    base_image.onload = this.loadImageTemplate(base_image, context, name)
+  }
+
+  loadImageTemplate(base_image: any, context: any, name: string){
+    return () => {
+      context.drawImage(base_image, 0,0,421, 614)
+      this.addName(name, context)
+    }
   }
 
   addName(name: string, context: any){
