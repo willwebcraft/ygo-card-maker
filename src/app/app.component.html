@@ -1,3 +1,4 @@
+<h1>Générateur de Carte Yu-Gi-Oh!</h1>
 <div class="container">
   <div class="result-card">
     <canvas #cardCanvas width="421" height="614">
@@ -7,12 +8,13 @@
   
 
   <div class="form" >
+    
     <form [formGroup]="cardForm" class="cardForm">
       <div>
         <h4>Nom</h4>
         <mat-form-field appearance="fill">
           <mat-label>Nom</mat-label>
-          <input matInput type="text" formControlName="name" aria-label="Nom de la carte" (blur)="generateCard()">
+          <input matInput type="text" formControlName="name" aria-label="Nom de la carte">
         </mat-form-field>
       </div>
 
@@ -20,7 +22,7 @@
         <h4>Template</h4>
         <mat-form-field appearance="fill">
           <mat-label>Type de carte</mat-label>
-          <mat-select formControlName="cardType" (blur)="generateCard()">
+          <mat-select formControlName="cardType">
             <mat-option *ngFor="let cardTemplate of cardTemplates" [value]="cardTemplate">
               {{cardTemplate}}
             </mat-option>
@@ -32,7 +34,7 @@
         <h4>Symbole</h4>
         <mat-form-field appearance="fill">
           <mat-label>Symbole</mat-label>
-          <mat-select formControlName="symbol" (blur)="generateCard()">
+          <mat-select formControlName="symbol">
             <mat-option *ngFor="let symbol of symbols" [value]="symbol">
               {{symbol}}
             </mat-option>
@@ -44,7 +46,7 @@
         <h4>Type</h4>
         <mat-form-field appearance="fill">
           <mat-label>Type</mat-label>
-          <input matInput type="text" formControlName="name" aria-label="Type de la carte" (blur)="generateCard()">
+          <input matInput type="text" formControlName="name" aria-label="Type de la carte">
         </mat-form-field>
       </div>
 
@@ -52,7 +54,7 @@
         <h4>Icone</h4>
         <mat-form-field appearance="fill">
           <mat-label>Icône</mat-label>
-          <mat-select formControlName="icon" (blur)="generateCard()">
+          <mat-select formControlName="icon">
             <mat-option *ngFor="let icon of icons" [value]="icon">
               {{icon}}
             </mat-option>
@@ -64,7 +66,7 @@
         <h4>ATK</h4>
         <mat-form-field appearance="fill">
           <mat-label>Attaque</mat-label>
-          <input matInput type="number" formControlName="atk" aria-label="Attaque du monstre" (blur)="generateCard()">
+          <input matInput type="number" formControlName="atk" aria-label="Attaque du monstre">
         </mat-form-field>
       </div>
 
@@ -72,9 +74,23 @@
         <h4>DEF</h4>
         <mat-form-field appearance="fill">
           <mat-label>Défense</mat-label>
-          <input matInput type="number" formControlName="def" aria-label="Défense du monstre" (blur)="generateCard()">
+          <input matInput type="number" formControlName="def" aria-label="Défense du monstre">
         </mat-form-field>
       </div>
+
+      <div class="description">
+        <h4>Description</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" aria-label="Description de la carte">
+
+          </textarea>
+        </mat-form-field>
+      </div>
+
+
     </form>
+    <button mat-raised-button color="primary" (click)="generateCard()">Générer</button>
+
   </div>
 </div>

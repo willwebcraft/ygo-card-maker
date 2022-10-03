@@ -1,7 +1,13 @@
+h1 {
+    padding: 3rem;
+    font-weight: 700;
+    font-size: 4rem;
+}
+
 .container {
     display: flex;
     flex-direction: row;
-    padding: 5rem;
+    padding-left: 3rem;
 }
 
 .form {
@@ -16,5 +22,14 @@
 
     &>* {
         padding: 1rem;
+    }
+}
+
+.description {
+    width: 500px !important;
+    min-width: unset !important;
+
+    mat-form-field {
+        width: 100%;
     }
 }

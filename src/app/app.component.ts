@@ -8,9 +8,8 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 })
 export class AppComponent {
 
-  @ViewChild('cardCanvas', {static: true}) 
+  @ViewChild('cardCanvas', {static: false}) 
   cardCanvas: ElementRef<HTMLCanvasElement>;
-  private _context: CanvasRenderingContext2D;
 
   cardTemplates = [
     "Normal",
@@ -52,11 +51,12 @@ export class AppComponent {
       icon: new FormControl(['']),
       atk: new FormControl(['']),
       def: new FormControl(['']),
+      description: new FormControl([''])
     })
   }
 
   ngOnInit(){
-    this.generateCard()
+
   }
 
   isMonster(){
@@ -68,26 +68,6 @@ export class AppComponent {
       default:
         return true;
     }
-  }
-
-  loadImage(){
-    const canvas = this.cardCanvas.nativeElement;
-    if(canvas.getContext){
-      let context = canvas.getContext('2d');
-      const base_image = new Image();
-      base_image.src = '../assets/templates/normal.jpg';
-      base_image.onload = function(){context.drawImage(base_image, 0,0,421, 614)}
-    }  
-  }
-
-  addName(){
-    const canvas = this.cardCanvas.nativeElement;
-    if(canvas.getContext){
-      let context = canvas.getContext('2d');
-      const name = this.cardForm.controls.name.value;
-      context.font = "60pt Calibri black";
-      context.fillText(name, 50, 60);
-    }  
   }
 
   setCardTemplate(cardType: string){
@@ -111,22 +91,38 @@ export class AppComponent {
     const cardType = this.cardForm.controls.cardType.value;
     const symbol = this.cardForm.controls.symbol.value;
     const icon = this.cardForm.controls.icon.value;
-    let atk : number;
-    let def: number
+    let atk: number;
+    let def: number;
     if(this.isMonster()){
       atk = this.cardForm.controls.atk.value;
       def = this.cardForm.controls.def.value;
     }
+    const description = this.cardForm.controls.description.value;
 
     // CANVAS
-    const canvas = this.cardCanvas.nativeElement;
-    if(canvas.getContext){
-      let context = canvas.getContext('2d');
-      const base_image = new Image();
-      base_image.src = this.setCardTemplate(cardType);
-      base_image.onload = function(){context.drawImage(base_image, 0,0,421, 614)}
-    }
+    const canvas = this.cardCanvas.nativeElement
+    const context = canvas.getContext('2d');
 
+    // DRAW TEMPLATE
+    this.drawTemplateCard(cardType, context);
+
+    // ADD NAME
+    this.addName(name, context);
+
+  }
+
+  drawTemplateCard(cardType: string, context: any){
+    console.log("in draw template")
+    const base_image = new Image();
+    base_image.src = this.setCardTemplate(cardType);
+    base_image.onload = function(){context.drawImage(base_image, 0,0,421, 614)}
+  }
+
+  addName(name: string, context: any){
+    context.globalCompositeOperation = 'source-over'
+    console.log("in addname", name)
+    context.font = "60pt Calibri";
+    context.fillText(name, 50, 60);
   }
 
 }
