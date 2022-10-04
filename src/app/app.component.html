@@ -27,7 +27,7 @@
         <h4>Template</h4>
         <mat-form-field appearance="fill">
           <mat-label>Type de carte</mat-label>
-          <mat-select formControlName="cardType">
+          <mat-select formControlName="cardTemplate" (focus)="generateCard()">
             <mat-option *ngFor="let cardTemplate of cardTemplates" [value]="cardTemplate">
               {{cardTemplate}}
             </mat-option>
