@@ -8,7 +8,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 })
 export class AppComponent {
 
-  @ViewChild('cardCanvas', {static: false}) 
+  @ViewChild('cardCanvas', {static: true}) 
   cardCanvas: ElementRef<HTMLCanvasElement>;
 
   cardTemplates = [
@@ -49,8 +49,8 @@ export class AppComponent {
       cardType: new FormControl(['']),
       symbol: new FormControl(['']),
       icon: new FormControl(['']),
-      atk: new FormControl(['']),
-      def: new FormControl(['']),
+      atk: new FormControl(['2000']),
+      def: new FormControl(['2000']),
       description: new FormControl(['lorem'])
     })
   }
@@ -104,25 +104,39 @@ export class AppComponent {
     const context = canvas.getContext('2d');
 
     // DRAW TEMPLATE
-    this.drawTemplateCard(cardType, context, name, description);
+    this.drawTemplateCard(cardType, context, name, description, atk!, def!);
 
     // ADD NAME
     //this.addName(name, context);
 
   }
 
-  drawTemplateCard(cardType: string, context: any, name, description: string){
+  drawTemplateCard(
+    cardType: string, 
+    context: any, 
+    name: string, 
+    description: string, 
+    atk: number, 
+    def: number){
     console.log("in draw template")
     const base_image = new Image();
     base_image.src = this.setCardTemplate(cardType);
-    base_image.onload = this.loadImageTemplate(base_image, context, name, description)
+    base_image.onload = this.loadImageTemplate(base_image, context, name, description, atk, def)
   }
 
-  loadImageTemplate(base_image: any, context: any, name: string, description: string){
+  loadImageTemplate(
+    base_image: any, 
+    context: any, 
+    name: string, 
+    description: string,
+    atk: number,
+    def: number,
+    ){
     return () => {
       context.drawImage(base_image, 0,0,421, 614)
       this.addName(name, context)
       this.addDescription(description, context)
+      this.addAtkDef(atk, def, context)
     }
   }
 
@@ -140,6 +154,12 @@ export class AppComponent {
     context.fillText(description, 35, 485);
   }
 
+  addAtkDef(atk: number, def: number, context: any){
+    console.log('add atk def');
+    context.font = "14pt Calibri";
+    context.fillText(atk, 265, 577);
+    context.fillText(def, 350, 577);
+  }
 
 
 }

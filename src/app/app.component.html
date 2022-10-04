@@ -4,6 +4,11 @@
     <canvas #cardCanvas width="421" height="614">
   
     </canvas>
+    <div class="result-buttons">
+      <button mat-raised-button color="primary">Exporter</button>
+      <button mat-raised-button color="primary">Télécharger JSON</button>
+    </div>
+
   </div>
   
 
@@ -66,7 +71,13 @@
         <h4>ATK</h4>
         <mat-form-field appearance="fill">
           <mat-label>Attaque</mat-label>
-          <input matInput type="number" formControlName="atk" aria-label="Attaque du monstre">
+          <input 
+            matInput 
+            type="number"
+            (keyup)="generateCard()"
+            (change)="generateCard()"
+            formControlName="atk" 
+            aria-label="Attaque du monstre">
         </mat-form-field>
       </div>
 
@@ -74,7 +85,13 @@
         <h4>DEF</h4>
         <mat-form-field appearance="fill">
           <mat-label>Défense</mat-label>
-          <input matInput type="number" formControlName="def" aria-label="Défense du monstre">
+          <input 
+            matInput 
+            (keyup)="generateCard()"
+            (change)="generateCard()"
+            type="number" 
+            formControlName="def" 
+            aria-label="Défense du monstre">
         </mat-form-field>
       </div>
 
@@ -82,7 +99,11 @@
         <h4>Description</h4>
         <mat-form-field appearance="fill">
           <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" aria-label="Description de la carte">
+          <textarea 
+            matInput 
+            formControlName="description"
+            (keyup)="generateCard()" 
+            aria-label="Description de la carte">
 
           </textarea>
         </mat-form-field>
