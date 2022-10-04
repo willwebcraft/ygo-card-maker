@@ -51,7 +51,11 @@
         <h4>Type</h4>
         <mat-form-field appearance="fill">
           <mat-label>Type</mat-label>
-          <input matInput type="text" formControlName="name" aria-label="Type de la carte">
+          <input 
+            matInput 
+            (keyup)="generateCard()"
+            (change)="generateCard()"
+            type="text" formControlName="type" aria-label="Type de la carte">
         </mat-form-field>
       </div>
 

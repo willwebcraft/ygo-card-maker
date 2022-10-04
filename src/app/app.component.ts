@@ -46,12 +46,13 @@ export class AppComponent {
   constructor(private _formBuilder: FormBuilder){
     this.cardForm = this._formBuilder.group({
       name: new FormControl(['bonsoir']),
-      cardType: new FormControl(['']),
+      cardTemplate: new FormControl(['']),
       symbol: new FormControl(['']),
       icon: new FormControl(['']),
       atk: new FormControl(['2000']),
       def: new FormControl(['2000']),
-      description: new FormControl(['lorem'])
+      description: new FormControl(['lorem']),
+      type: new FormControl(['Démon'])
     })
   }
 
@@ -60,7 +61,7 @@ export class AppComponent {
   }
 
   isMonster(){
-    switch(this.cardForm.controls.cardType.value){
+    switch(this.cardForm.controls.cardTemplate.value){
       case "Magie":
         return false;
       case "Piège":
@@ -70,8 +71,8 @@ export class AppComponent {
     }
   }
 
-  setCardTemplate(cardType: string){
-    switch(cardType){
+  setCardTemplate(cardTemplate: string){
+    switch(cardTemplate){
       case "Normal":
         return '../assets/templates/normal.jpg'
       case "Effet":
@@ -88,7 +89,7 @@ export class AppComponent {
   generateCard(){
     // VARIABLES
     const name = this.cardForm.controls.name.value.toString().toUpperCase();
-    const cardType = this.cardForm.controls.cardType.value;
+    const cardTemplate = this.cardForm.controls.cardTemplate.value;
     const symbol = this.cardForm.controls.symbol.value;
     const icon = this.cardForm.controls.icon.value;
     let atk: number;
@@ -104,7 +105,7 @@ export class AppComponent {
     const context = canvas.getContext('2d');
 
     // DRAW TEMPLATE
-    this.drawTemplateCard(cardType, context, name, description, atk!, def!);
+    this.drawTemplateCard(cardTemplate, context, name, description, atk!, def!);
 
     // ADD NAME
     //this.addName(name, context);
@@ -112,7 +113,7 @@ export class AppComponent {
   }
 
   drawTemplateCard(
-    cardType: string, 
+    cardTemplate: string, 
     context: any, 
     name: string, 
     description: string, 
@@ -120,7 +121,7 @@ export class AppComponent {
     def: number){
     console.log("in draw template")
     const base_image = new Image();
-    base_image.src = this.setCardTemplate(cardType);
+    base_image.src = this.setCardTemplate(cardTemplate);
     base_image.onload = this.loadImageTemplate(base_image, context, name, description, atk, def)
   }
 
@@ -137,6 +138,7 @@ export class AppComponent {
       this.addName(name, context)
       this.addDescription(description, context)
       this.addAtkDef(atk, def, context)
+      this.addType(context)
     }
   }
 
@@ -151,7 +153,7 @@ export class AppComponent {
     context.globalCompositeOperation = 'source-over'
     console.log("in add description", description)
     context.font = "15pt Calibri";
-    context.fillText(description, 35, 485);
+    context.fillText(description, 35, 500);
   }
 
   addAtkDef(atk: number, def: number, context: any){
@@ -159,6 +161,12 @@ export class AppComponent {
     context.font = "14pt Calibri";
     context.fillText(atk, 265, 577);
     context.fillText(def, 350, 577);
+  }
+
+  addType(context: any){
+    const type = "[" + this.cardForm.controls.type.value + "]";
+    context.font = "15pt Calibri";
+    context.fillText(type, 35, 480);
   }
 
 
