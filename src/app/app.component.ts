@@ -146,14 +146,17 @@ export class AppComponent {
     context.globalCompositeOperation = 'source-over'
     console.log("in addname", name)
     context.font = "25pt Calibri";
-    context.fillText(name, 36, 58);
+    context.fillText(name, 29, 58, 330);
   }
 
   addDescription(description: string, context: any){
     context.globalCompositeOperation = 'source-over'
     console.log("in add description", description)
     context.font = "15pt Calibri";
-    context.fillText(description, 35, 500);
+    let text = context.measureText(description)
+    console.log(`text size = ${text.width}`)
+    //context.fillText(description, 35, 500, 350, 300);
+    this.drawTextMultiLne(context, description, 35, 500, 350, 50, "justify", "", 15)
   }
 
   addAtkDef(atk: number, def: number, context: any){
@@ -169,5 +172,145 @@ export class AppComponent {
     context.fillText(type, 35, 480);
   }
 
+  drawTextMultiLne(context, text, x, y, w, h, hAlign, vAlign, lineheight){
+    // The objective of this part of the code is to generate an array of words. 
+    // There will be a special word called '\n' that indicates a separation of paragraphs.
+    text = text.replace(/\r/g, '');
+    var words = [];
+    var inLines = text.split('\n');
+    var i;
+    for (i=0; i < inLines.length; i++)
+    {
+    	if (i) words.push('\n');
+    	words = words.concat( inLines[i].split(' ') );
+    }
+    // words now contains the array.
 
+
+    // Next objective is generate an array of lines where each line has a property 
+    // called Words with all the words that fits in the line. Each word contains 2 fields:
+    // .word for the actual word and .l for the length o the word.
+    // If the line is the last line of a paragraps, the property EndOfParagraph will be true
+    var sp = context.measureText(' ').width;
+    var lines = [];
+    var actualline = 0;
+    var actualsize = 0;
+    var wo;
+    lines[actualline] = {};
+    lines[actualline].Words = [];
+    i = 0;
+    while (i < words.length) {
+      var word = words[i];
+      if (word == "\n") {
+          lines[actualline].EndParagraph = true;
+          actualline++;
+          actualsize = 0;
+          lines[actualline] = {};
+          lines[actualline].Words = [];
+          i++;
+      } else {
+          wo = {};
+          wo.l = context.measureText(word).width;
+          if (actualsize === 0) {
+
+              // If the word does not fit in one line, we split the word
+              while (wo.l > w) {
+                  word = word.slice(0, word.length - 1);
+                  wo.l = context.measureText(word).width;
+              }
+
+              wo.word = word;
+              lines[actualline].Words.push(wo);
+              actualsize = wo.l;
+              if (word != words[i]) {
+                  // if a single letter does not fit in one line, just return without painting nothing.
+                  /*if (word === "") {
+                    return {};
+                  }*/
+                  words[i] = words[i].slice(word.length, words[i].length);
+              } else {
+                  i++;
+              }
+          } else {
+              if (actualsize + sp + wo.l > w) {
+                  lines[actualline].EndParagraph = false;
+                  actualline++;
+                  actualsize = 0;
+                  lines[actualline] = {};
+                  lines[actualline].Words = [];
+              } else {
+                  wo.word = word;
+                  lines[actualline].Words.push(wo);
+                  actualsize += sp + wo.l;
+                  i++;
+              }
+          }
+      }
+    }
+    if (actualsize === 0) lines.pop(); // We remove the last line if we have not added any thing here.
+
+    // The last line will be allways the last line of a paragraph even if it does not end with a  /n
+    lines[actualline].EndParagraph = true;
+
+
+    // Now we remove any line that does not fit in the heigth.
+    var totalH = lineheight * lines.length;
+    while (totalH > h) {
+        lines.pop();
+        totalH = lineheight * lines.length;
+    }
+
+    // Now we calculete where we start draw the text.
+    var yy;
+    if (vAlign == "bottom") {
+        yy = y + h - totalH + lineheight;
+    } else if (vAlign == "center") {
+        yy = y + h / 2 - totalH / 2 + lineheight;
+    } else {
+        yy = y;
+    }
+
+    var oldTextAlign = context.textAlign;
+    context.textAlign = "left"; // we will draw word by word.
+
+	var maxWidth = 0;
+    for (var li in lines) {
+    	if (!lines.hasOwnProperty(li)) continue;
+        var totallen = 0;
+        var xx, usp;
+
+
+        for (wo in lines[li].Words) {
+            if (!lines[li].Words.hasOwnProperty(wo)) continue;
+            totallen += lines[li].Words[wo].l;
+        }
+        // Here we calculate the x position and the distance betwen words in pixels 
+        if (hAlign == "center") {
+            usp = sp;
+            xx = x + w / 2 - (totallen + sp * (lines[li].Words.length - 1)) / 2;
+        } else if ((hAlign == "justify") && (!lines[li].EndParagraph)) {
+            xx = x;
+            usp = (w - totallen) / (lines[li].Words.length - 1);
+        } else if (hAlign == "right") {
+            xx = x + w - (totallen + sp * (lines[li].Words.length - 1));
+            usp = sp;
+        } else { // left
+            xx = x;
+            usp = sp;
+        }
+        for (wo in lines[li].Words) {
+	    	if (!lines[li].Words.hasOwnProperty(wo)) continue;
+            context.fillText(lines[li].Words[wo].word, xx, yy);
+            xx += lines[li].Words[wo].l + usp;
+        }
+        maxWidth = Math.max(maxWidth, xx);
+        yy += lineheight;
+    }
+    context.textAlign = oldTextAlign;
+
+    return {
+    	width: maxWidth,
+    	height: totalH,
+    };
+  }
 }
