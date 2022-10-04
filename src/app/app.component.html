@@ -19,7 +19,7 @@
         <h4>Nom</h4>
         <mat-form-field appearance="fill">
           <mat-label>Nom</mat-label>
-          <input matInput type="text" formControlName="name" aria-label="Nom de la carte">
+          <input matInput type="text" formControlName="name" aria-label="Nom de la carte" (keyup)="generateCard()">
         </mat-form-field>
       </div>
 
@@ -64,7 +64,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Icône</mat-label>
           <mat-select formControlName="icon">
-            <mat-option *ngFor="let icon of icons" [value]="icon">
+            <mat-option *ngFor="let icon of icons" [value]="icon" (focus)="generateCard()">
               {{icon}}
             </mat-option>
           </mat-select>
@@ -115,7 +115,5 @@
 
 
     </form>
-    <button mat-raised-button color="primary" (click)="generateCard()">Générer</button>
-
   </div>
 </div>
