@@ -153,8 +153,6 @@ export class AppComponent {
     context.globalCompositeOperation = 'source-over'
     console.log("in add description", description)
     context.font = "15pt Calibri";
-    let text = context.measureText(description)
-    console.log(`text size = ${text.width}`)
     //context.fillText(description, 35, 500, 350, 300);
     this.drawTextMultiLne(context, description, 35, 500, 350, 50, "justify", "", 15)
   }
@@ -175,6 +173,9 @@ export class AppComponent {
   drawTextMultiLne(context, text, x, y, w, h, hAlign, vAlign, lineheight){
     // The objective of this part of the code is to generate an array of words. 
     // There will be a special word called '\n' that indicates a separation of paragraphs.
+    if (typeof(text) === "object"){
+      text = text[0]
+    }
     text = text.replace(/\r/g, '');
     var words = [];
     var inLines = text.split('\n');
@@ -255,10 +256,15 @@ export class AppComponent {
 
     // Now we remove any line that does not fit in the heigth.
     var totalH = lineheight * lines.length;
+    sp = context.measureText(' ').width;
+
     while (totalH > h) {
-        lines.pop();
-        totalH = lineheight * lines.length;
+      lineheight = lineheight - 2;
+      context.font = `${lineheight}pt Calibri`;
+      totalH = lineheight * lines.length;
     }
+    context.font = `${lineheight}pt Calibri`;
+    sp = context.measureText(' ').width;
 
     // Now we calculete where we start draw the text.
     var yy;
