@@ -154,7 +154,7 @@ export class AppComponent {
     console.log("in add description", description)
     context.font = "15pt Calibri";
     //context.fillText(description, 35, 500, 350, 300);
-    this.drawTextMultiLne(context, description, 35, 500, 350, 50, "justify", "", 15)
+    this.drawTextMultiLne(context, description, 35, 500, 350, 50, "", "", 15)
   }
 
   addAtkDef(atk: number, def: number, context: any){
@@ -193,6 +193,7 @@ export class AppComponent {
     // .word for the actual word and .l for the length o the word.
     // If the line is the last line of a paragraps, the property EndOfParagraph will be true
     var sp = context.measureText(' ').width;
+    console.log(`sp = ${sp}`);
     var lines = [];
     var actualline = 0;
     var actualsize = 0;
@@ -259,12 +260,74 @@ export class AppComponent {
     sp = context.measureText(' ').width;
 
     while (totalH > h) {
-      lineheight = lineheight - 2;
+      lineheight = lineheight - 1;
       context.font = `${lineheight}pt Calibri`;
       totalH = lineheight * lines.length;
     }
     context.font = `${lineheight}pt Calibri`;
     sp = context.measureText(' ').width;
+    console.log(`sp 2 = ${sp}`);
+
+    // we need to reparse the line with the new font
+    var sp = context.measureText(' ').width;
+    console.log(`sp = ${sp}`);
+    var lines = [];
+    var actualline = 0;
+    var actualsize = 0;
+    var wo;
+    lines[actualline] = {};
+    lines[actualline].Words = [];
+    i = 0;
+    while (i < words.length) {
+      var word = words[i];
+      if (word == "\n") {
+          lines[actualline].EndParagraph = true;
+          actualline++;
+          actualsize = 0;
+          lines[actualline] = {};
+          lines[actualline].Words = [];
+          i++;
+      } else {
+          wo = {};
+          wo.l = context.measureText(word).width;
+          if (actualsize === 0) {
+
+              // If the word does not fit in one line, we split the word
+              while (wo.l > w) {
+                  word = word.slice(0, word.length - 1);
+                  wo.l = context.measureText(word).width;
+              }
+
+              wo.word = word;
+              lines[actualline].Words.push(wo);
+              actualsize = wo.l;
+              if (word != words[i]) {
+                  // if a single letter does not fit in one line, just return without painting nothing.
+                  /*if (word === "") {
+                    return {};
+                  }*/
+                  words[i] = words[i].slice(word.length, words[i].length);
+              } else {
+                  i++;
+              }
+          } else {
+              if (actualsize + sp + wo.l > w) {
+                  lines[actualline].EndParagraph = false;
+                  actualline++;
+                  actualsize = 0;
+                  lines[actualline] = {};
+                  lines[actualline].Words = [];
+              } else {
+                  wo.word = word;
+                  lines[actualline].Words.push(wo);
+                  actualsize += sp + wo.l;
+                  i++;
+              }
+          }
+      }
+    }
+    if (actualsize === 0) lines.pop(); // We remove the last line if we have not added any thing here.
+    lines[actualline].EndParagraph = true;
 
     // Now we calculete where we start draw the text.
     var yy;
@@ -303,7 +366,9 @@ export class AppComponent {
         } else { // left
             xx = x;
             usp = sp;
+            console.log(`usp 3 = ${usp}`);
         }
+        console.log(`usp 3 = ${usp}`);
         for (wo in lines[li].Words) {
 	    	if (!lines[li].Words.hasOwnProperty(wo)) continue;
             context.fillText(lines[li].Words[wo].word, xx, yy);
